@@ -58,11 +58,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/14.loader.js";
+      var loaderUrl = buildUrl + "/16.loader.js";
       var config = {
-        dataUrl: buildUrl + "/14.data",
-        frameworkUrl: buildUrl + "/14.framework.js",
-        codeUrl: buildUrl + "/14.wasm",
+        dataUrl: buildUrl + "/16.data",
+        frameworkUrl: buildUrl + "/16.framework.js",
+        codeUrl: buildUrl + "/16.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "telegram",
@@ -101,23 +101,24 @@
 
       loadingBar.style.display = "block";
 
-      var unityInstance;
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-       createUnityInstance(canvas, config, (progress) => {
-        progressBarFull.style.width = 100 * progress + "%";
-         }).then((instance) => {
-        unityInstance = instance;  // Store the instance globally
-        loadingBar.style.display = "none";
-        fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-        };
-        }).catch((message) => {
-        alert(message);
-        });
-      };
-      document.body.appendChild(script);
+      var unityInstance;  // Declare unityInstance globally
+var script = document.createElement("script");
+script.src = loaderUrl;
+script.onload = () => {
+  createUnityInstance(canvas, config, (progress) => {
+    progressBarFull.style.width = 100 * progress + "%";
+  }).then((instance) => {
+    unityInstance = instance;  // Store the instance globally
+    loadingBar.style.display = "none";
+    fullscreenButton.onclick = () => {
+      unityInstance.SetFullscreen(1);
+    };
+  }).catch((message) => {
+    alert(message);
+  });
+};
+document.body.appendChild(script);
+
 
     </script>
   </body>
