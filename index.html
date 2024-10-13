@@ -48,7 +48,7 @@
           const user = Telegram.WebApp.initDataUnsafe.user;  // Get user data from Telegram
           
           // Send user data to Unity's GameObject 'GetUserFromHTML' and its method 'ReceiveUsersInformation'
-          unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUsersInformation', JSON.stringify(user));
+          unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUserInformation', JSON.stringify(user));
         }
       }).catch((message) => {
         alert("Failed to load Unity instance: " + message);
