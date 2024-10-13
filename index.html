@@ -4,13 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | SeedHunterClicker</title>
+    <!-- Include Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width="360" height="640" tabindex="-1" style="width: 360px; height: 640px; background: #7F3D00"></canvas>
-    <script src="Build/22.loader.js"></script>
+    <canvas id="unity-canvas" width="360" height="640" tabindex="-1" style="width: 360px; height: 640px; background: #000000"></canvas>
+    
+    <!-- Unity Loader Script -->
+    <script src="Build/23.loader.js"></script>
     <script>
-      // Handle mobile device styles
+      // Declare Unity instance globally
+      var unityInstance;
+
+      // Detect mobile devices and adjust canvas size
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         var meta = document.createElement('meta');
         meta.name = 'viewport';
@@ -25,44 +31,28 @@
         document.body.style.textAlign = "left";
       }
 
-      // Declare unityInstance globally
-      var unityInstance;
+      // Load Unity instance and initialize Telegram WebApp interaction
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/23.data",
+        frameworkUrl: "Build/23.framework.js",
+        codeUrl: "Build/23.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "SeedHunter",
+        productName: "SeedHunterClicker",
+        productVersion: "1.0",
+      }).then((instance) => {
+        unityInstance = instance;  // Store Unity instance globally
 
-      // Load Unity instance
-      var script = document.createElement("script");
-      script.src = "Build/22.loader.js"; // Adjust the path to your loader script
-      script.onload = () => {
-        createUnityInstance(document.querySelector("#unity-canvas"), {
-          dataUrl: "Build/22.data",
-          frameworkUrl: "Build/22.framework.js",
-          codeUrl: "Build/22.wasm",
-          streamingAssetsUrl: "StreamingAssets",
-          companyName: "SeedHunter",
-          productName: "SeedHunterClicker",
-          productVersion: "1.0"
-        }).then((instance) => {
-          unityInstance = instance;  // Store the instance globally
-          document.getElementById("loadingBar").style.display = "none"; // If you have a loading bar
-
-          // Fullscreen button functionality
-          document.getElementById("fullscreenButton").onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
+        // Check if Telegram WebApp is available and initialized
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe) {
+          const user = Telegram.WebApp.initDataUnsafe.user;  // Get user data from Telegram
           
-          // Check if Telegram WebApp is available and initialized
-          if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe) {
-            const user = Telegram.WebApp.initDataUnsafe.user;  // Get user data from Telegram
-
-            // Send user data to Unity
-            unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUsersInformation', JSON.stringify(user));
-          }
-
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-
-      document.head.appendChild(script);
+          // Send user data to Unity's GameObject 'GetUserFromHTML' and its method 'ReceiveUsersInformation'
+          unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUsersInformation', JSON.stringify(user));
+        }
+      }).catch((message) => {
+        alert("Failed to load Unity instance: " + message);
+      });
     </script>
   </body>
 </html>
