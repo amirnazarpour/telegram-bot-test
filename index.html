@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | SeedHunterClicker</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=360 height=640 tabindex="-1" style="width: 360px; height: 640px; background: #000000"></canvas>
-    <script src="Build/32.loader.js"></script>
+    <script src="Build/34.loader.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
@@ -24,16 +25,31 @@
         document.body.style.textAlign = "left";
       }
 
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/32.data",
-        frameworkUrl: "Build/32.framework.js",
-        codeUrl: "Build/32.wasm",
+          // Load Unity instance and initialize Telegram WebApp interaction
+          createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/34.data",
+        frameworkUrl: "Build/34.framework.js",
+        codeUrl: "Build/34.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "SeedHunter",
         productName: "SeedHunterClicker",
         productVersion: "1.0",
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }).then((instance) => {
+        unityInstance = instance;  // Store Unity instance globally
+
+        // Check if Telegram WebApp is available and initialized
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe) {
+          const user = Telegram.WebApp.initDataUnsafe.user;  // Get user data from Telegram
+          
+          // Send user data to Unity's GameObject 'GetUserFromHTML' and its method 'ReceiveUsersInformation'
+          unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUsersInformation', JSON.stringify(user));
+
+         // Get the 'start' parameter from URL and send it to Unity
+         const startParam = getQueryParam('start');
+         unityInstance.SendMessage('GetUserFromHTML', 'RecieveStartParameter', startParam);
+        }
+      }).catch((message) => {
+        alert("Failed to load Unity instance: " + message);
       });
     </script>
   </body>
