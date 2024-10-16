@@ -55,11 +55,7 @@
     <script src="Build/34.loader.js"></script>
 
     <script>
-      // Function to get query parameters from the URL
-      function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-      }
+
 
       // Function to hide loader and show the game canvas
       function hideLoader() {
@@ -101,10 +97,29 @@
           unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUserInformation', JSON.stringify(user));
 
           // Get the 'start' parameter from URL and send it to Unity
-          const startParam = getQueryParam('start');
-          if (startParam) {
+      
+          Telegram.WebApp.ready();
+         console.log("Telegram WebApp is ready.");
+
+          // Capture the start parameter
+         const startParam = Telegram.WebApp.initDataUnsafe.start_param;
+    
+         // Log the captured start parameter for debugging
+        if (startParam) {
+         console.log("Captured Start Parameter:", startParam);
+        
+        // Send the start parameter to Unity if it exists
+        try {
+            // Assuming unityInstance is already initialized by Unity WebGL
             unityInstance.SendMessage('GetUserFromHTML', 'RecieveStartParameter', startParam);
-          }
+            console.log("Start parameter sent to Unity: ", startParam);
+        } catch (error) {
+            console.error("Failed to send message to Unity:", error);
+        }
+        } else {
+        console.log("No start parameter found.");
+       }
+        
         }
       }).catch((message) => {
         alert("Failed to load Unity instance: " + message);
