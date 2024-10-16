@@ -39,6 +39,7 @@
       /* Initially hide the canvas and show the loader */
       #unity-canvas {
         display: none;
+        background: #000000;
       }
     </style>
   </head>
@@ -50,7 +51,7 @@
     </div>
 
     <!-- Unity canvas -->
-    <canvas id="unity-canvas" width="360" height="640" tabindex="-1" style="background: #000000"></canvas>
+    <canvas id="unity-canvas" width="360" height="640" tabindex="-1"></canvas>
     <script src="Build/34.loader.js"></script>
 
     <script>
@@ -63,7 +64,19 @@
       // Function to hide loader and show the game canvas
       function hideLoader() {
         document.getElementById('loader-wrapper').style.display = 'none';
-        document.getElementById('unity-canvas').style.display = 'block';
+        const canvas = document.getElementById('unity-canvas');
+        canvas.style.display = 'block';
+        
+        // Ensure proper canvas sizing on mobile devices
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          canvas.style.width = "100%";
+          canvas.style.height = "100%";
+          canvas.style.position = "fixed";
+          document.body.style.textAlign = "left";
+        } else {
+          canvas.style.width = "360px";  // restore original size for non-mobile
+          canvas.style.height = "640px";
+        }
       }
 
       // Load Unity instance and initialize Telegram WebApp interaction
