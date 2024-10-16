@@ -4,19 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | SeedHunterClicker</title>
-     <!-- Include Telegram WebApp SDK -->
-     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=360 height=640 tabindex="-1" style="width: 360px; height: 640px; background: #000000"></canvas>
-        
-    <!-- Unity Loader Script -->
-    <script src="Build/24.loader.js"></script>
+    <script src="Build/25.loader.js"></script>
     <script>
-         // Declare Unity instance globally
-         var unityInstance;
-
-         // Detect mobile devices and adjust canvas size
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
         var meta = document.createElement('meta');
@@ -32,27 +24,16 @@
         document.body.style.textAlign = "left";
       }
 
-       // Load Unity instance and initialize Telegram WebApp interaction
-       createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/24.data",
-        frameworkUrl: "Build/24.framework.js",
-        codeUrl: "Build/24.wasm",
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        dataUrl: "Build/25.data",
+        frameworkUrl: "Build/25.framework.js",
+        codeUrl: "Build/25.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "SeedHunter",
         productName: "SeedHunterClicker",
         productVersion: "1.0",
-      }).then((instance) => {
-        unityInstance = instance;  // Store Unity instance globally
-
-        // Check if Telegram WebApp is available and initialized
-        if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe) {
-          const user = Telegram.WebApp.initDataUnsafe.user;  // Get user data from Telegram
-          
-          // Send user data to Unity's GameObject 'GetUserFromHTML' and its method 'ReceiveUsersInformation'
-          unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUserInformation', JSON.stringify(user));
-        }
-      }).catch((message) => {
-        alert("Failed to load Unity instance: " + message);
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       });
     </script>
   </body>
