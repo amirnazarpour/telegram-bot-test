@@ -7,7 +7,7 @@
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=360 height=640 tabindex="-1" style="width: 360px; height: 640px; background: #000000"></canvas>
-    <script src="Build/25.loader.js"></script>
+    <script src="Build/29.loader.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
@@ -25,9 +25,9 @@
       }
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/25.data",
-        frameworkUrl: "Build/25.framework.js",
-        codeUrl: "Build/25.wasm",
+        dataUrl: "Build/29.data",
+        frameworkUrl: "Build/29.framework.js",
+        codeUrl: "Build/29.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "SeedHunter",
         productName: "SeedHunterClicker",
