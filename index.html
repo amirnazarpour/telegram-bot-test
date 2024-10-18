@@ -52,7 +52,7 @@
 
     <!-- Unity canvas -->
     <canvas id="unity-canvas" width="360" height="640" tabindex="-1"></canvas>
-    <script src="Build/39.loader.js"></script>
+    <script src="Build/40.loader.js"></script>
     <script>
       // Function to hide loader and show the game canvas
       function hideLoader() {
@@ -74,9 +74,9 @@
 
       // Load Unity instance and initialize Telegram WebApp interaction
       createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/39.data",
-        frameworkUrl: "Build/39.framework.js",
-        codeUrl: "Build/39.wasm",
+        dataUrl: "Build/40.data",
+        frameworkUrl: "Build/40.framework.js",
+        codeUrl: "Build/40.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "SeedHunter",
         productName: "SeedHunterClicker",
@@ -85,39 +85,43 @@
         // Hide the loader and show the canvas when Unity instance is ready
         hideLoader();
         unityInstance = instance;  // Store Unity instance globally
-
-        // Check if Telegram WebApp is available and initialized
-        if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe) {
-          const user = Telegram.WebApp.initDataUnsafe.user;
-          
-          // Send user data to Unity's GameObject 'GetUserFromHTML' and its method 'ReceiveUsersInformation'
-          unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUserInformation', JSON.stringify(user));
-
-          // Get the 'start' parameter from URL and send it to Unity
-          Telegram.WebApp.ready();
-          console.log("Telegram WebApp is ready.");
-
-          // Capture the start parameter
-          const startParam = Telegram.WebApp.initDataUnsafe.start_param;
-
-          // Log the captured start parameter for debugging
-          if (startParam) {
-            console.log("Captured Start Parameter:", startParam);
-            
-            try {
-              // Send the start parameter to Unity if it exists
-              unityInstance.SendMessage('GetUserFromHTML', 'RecieveStartParameter', startParam);
-              console.log("Start parameter sent to Unity: ", startParam);
-            } catch (error) {
-              console.error("Failed to send message to Unity:", error);
-            }
-          } else {
-            console.log("No start parameter found.");
-          }
-        }
+        SendUserInformationToUnity();
+        SendStartParameterToUnity();
+   
       }).catch((message) => {
         alert("Failed to load Unity instance: " + message);
       });
+
+      const tg = window.Telegram.WebApp;
+
+      function ReturnUserInformation() {
+      const user = tg.initDataUnsafe?.user;
+      return user ? JSON.stringify(user) : null;
+      }
+
+      function ReturnStartParam() {
+       const start_param = tg.initDataUnsafe?.start_param;
+       return start_param ? JSON.stringify(start_param) : null;
+      }
+
+       function SendStartParameterToUnity() {
+          const start_param = ReturnStartParam();
+          if (start_param) {
+            unityInstance.SendMessage('GetUserFromHTML', 'RecieveStartParameter', start_param);
+            } else {
+           unityInstance.SendMessage('GetUserFromHTML', 'RecieveStartParameter', 'No parameter available');
+          }
+        }
+
+      function SendUserInformationToUnity() {
+          const userInfo = ReturnUserInformation();
+          if (userInfo) {
+              unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUserInformation', userInfo);
+          } else {
+              unityInstance.SendMessage('GetUserFromHTML', 'ReceiveUserInformation', 'No user data available');
+          }
+      }
+
     </script>
   </body>
 </html>
