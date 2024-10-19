@@ -64,11 +64,11 @@
       var canvas = document.querySelector("#unity-canvas");
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/48.loader.js";
+      var loaderUrl = buildUrl + "/49.loader.js";
       var config = {
-        dataUrl: buildUrl + "/48.data",
-        frameworkUrl: buildUrl + "/48.framework.js",
-        codeUrl: buildUrl + "/48.wasm",
+        dataUrl: buildUrl + "/49.data",
+        frameworkUrl: buildUrl + "/49.framework.js",
+        codeUrl: buildUrl + "/49.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "SeedHunter",
         productName: "SeedHunterClicker",
@@ -102,7 +102,11 @@
           hideLoader();
           SendUserInformationToUnity();
           SendStartParameterToUnity();
-          unityInstance.SetFullscreen(1);
+          if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          } else {
+           unityInstance.SetFullscreen(1);
+          }
+    
         }).catch((message) => {
           alert(message);
         });
