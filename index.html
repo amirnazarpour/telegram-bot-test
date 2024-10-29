@@ -7,13 +7,43 @@
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
   <link rel="stylesheet" href="TemplateData/style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="unity-webview.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js?v=1.0"></script>
+  <script src="unity-webview.js?v=1.0"></script>
   <style>
-    .loader { /* Loader styles */ }
-    @keyframes spin { /* Spin animation */ }
-    #loader-container { /* Loader container styles */ }
-    #unity-container { display: none; /* Hide Unity container until loaded */ }
+    .loader {
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    #loader-container.hidden {
+      display: none;
+    }
+
+    #unity-container {
+      display: none; /* Hide Unity container until loading is complete */
+    }
   </style>
 </head>
 <body>
@@ -25,26 +55,37 @@
   </div>
 
   <script>
+
+    const tg = window.Telegram?.WebApp;
+    tg.ready();
     function expandTelegram() {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand();
-        unityInstance.SetFullscreen(1);
+      if (tg.Telegram && tg.Telegram.WebApp) {
+        tg.expand();
       }
     }
 
-    document.addEventListener("DOMContentLoaded", expandTelegram);
-    window.addEventListener('resize', expandTelegram); // Apply expand on resize
+    // Detect first visit and force a reload if necessary
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!localStorage.getItem('visited')) {
+        localStorage.setItem('visited', 'true');
+        location.reload(); // Force reload only on first visit
+      } else {
+        expandTelegram();
+      }
+    });
+
+    window.addEventListener('resize', expandTelegram); // Reapply expand on resize
 
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loaderContainer = document.querySelector("#loader-container");
 
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/66.loader.js";
+    var loaderUrl = buildUrl + "/66.loader.js?v=" + new Date().getTime();
     var config = {
-      dataUrl: buildUrl + "/66.data",
-      frameworkUrl: buildUrl + "/66.framework.js",
-      codeUrl: buildUrl + "/66.wasm",
+      dataUrl: buildUrl + "/66.data?v=" + new Date().getTime(),
+      frameworkUrl: buildUrl + "/66.framework.js?v=" + new Date().getTime(),
+      codeUrl: buildUrl + "/66.wasm?v=" + new Date().getTime(),
       streamingAssetsUrl: "StreamingAssets",
       companyName: "MedievalEmpires",
       productName: "Fight_MEE",
@@ -75,17 +116,18 @@
         SendStartParameterToUnity();
         unityInstance.SetFullscreen(1);
 
+        // Show Unity container and apply expand again after Unity loads
         container.style.display = "block";
         loaderContainer.classList.add("hidden");
-        expandTelegram(); // Force expand after Unity loads
-        setTimeout(expandTelegram, 1500); // Fallback expand
+        expandTelegram();
+        setTimeout(expandTelegram, 2000); // Fallback expand with additional delay
       }).catch((message) => {
         alert(message);
       });
     };
     document.body.appendChild(script);
 
-    const tg = window.Telegram?.WebApp;
+    
 
     function ReturnUserInformation() {
       const user = tg?.initDataUnsafe?.user;
