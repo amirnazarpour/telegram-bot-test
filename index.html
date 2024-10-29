@@ -64,11 +64,11 @@
       var loaderContainer = document.querySelector("#loader-container");
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/67.loader.js";
+      var loaderUrl = buildUrl + "/68.loader.js";
       var config = {
-        dataUrl: buildUrl + "/67.data",
-        frameworkUrl: buildUrl + "/67.framework.js",
-        codeUrl: buildUrl + "/67.wasm",
+        dataUrl: buildUrl + "/68.data",
+        frameworkUrl: buildUrl + "/68.framework.js",
+        codeUrl: buildUrl + "/68.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "MedievalEmpires",
         productName: "Fight_MEE",
@@ -98,7 +98,7 @@
           unityInstance = instance;
           SendUserInformationToUnity();
           SendStartParameterToUnity();
-          unityInstance.SetFullscreen(1);
+          ensureFullscreen();
           loaderContainer.classList.add("hidden"); // Hide loader when Unity is ready
           container.style.display = "block";       // Show Unity container when loading is done
         }).catch((message) => {
@@ -107,7 +107,14 @@
       };
       document.body.appendChild(script);
 
-
+      function ensureFullscreen() {
+      if (unityInstance) {
+        unityInstance.SetFullscreen(1);
+      } else {
+        setTimeout(ensureFullscreen, 500);
+       }
+      }
+      
 
       function ReturnUserInformation() {
         const user = tg?.initDataUnsafe?.user;
